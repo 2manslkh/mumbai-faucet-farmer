@@ -29,13 +29,6 @@ function sendFund(receiver: string, signer: Signer): Promise<any> {
   });
 }
 
-function sendMessage(receiver: string, signer: Signer): Promise<any> {
-  return signer.sendTransaction({
-    to: receiver,
-    data: ethers.utils.toUtf8Bytes("Hello"),
-  });
-}
-
 function sendFunds(
   receiver: string,
   signerAddresses: Signer[]
@@ -80,15 +73,15 @@ async function main() {
       );
       let txs = await Promise.allSettled(requestFunds(signerAddresses));
 
-      console.log("Reqeusts Sent!");
-      console.log(
-        "Fulfilled: ",
-        txs.map((tx) => tx.status).filter((x) => x == "fulfilled").length
-      );
-      console.log(
-        "Rejected: ",
-        txs.map((tx) => tx.status).filter((x) => x == "rejected").length
-      );
+      console.log("Requests Sent!");
+      // console.log(
+      //   "Fulfilled: ",
+      //   txs.map((tx) => tx.status).filter((x) => x == "fulfilled").length
+      // );
+      // console.log(
+      //   "Rejected: ",
+      //   txs.map((tx) => tx.status).filter((x) => x == "rejected").length
+      // );
 
       // Wait 4 minutes
       await sleep(240000);
@@ -108,21 +101,23 @@ async function main() {
         console.log("Chunks Remaining: ", chunksRemaining);
         let txs_2 = await Promise.allSettled(sendFunds(MAIN, signerChunk));
 
-        console.log("Reqeusts Sent!");
-        console.log(
-          "Fulfilled: ",
-          txs_2.map((tx) => tx.status).filter((x) => x == "fulfilled").length
-        );
-        console.log(
-          "Rejected: ",
-          txs_2.map((tx) => tx.status).filter((x) => x == "rejected").length
-        );
+        // console.log("Reqeusts Sent!");
+        // console.log(
+        //   "Fulfilled: ",
+        //   txs_2.map((tx) => tx.status).filter((x) => x == "fulfilled").length
+        // );
+        // console.log(
+        //   "Rejected: ",
+        //   txs_2.map((tx) => tx.status).filter((x) => x == "rejected").length
+        // );
         await sleep(3000);
         chunksRemaining--;
       }
     } else {
       SKIP_PART_2 = false;
     }
+
+    console.log("Current Funds: ", await signers[0].getBalance(MAIN));
 
     // Loop;
   }
