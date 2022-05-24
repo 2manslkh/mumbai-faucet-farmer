@@ -1,5 +1,9 @@
 import { Signer, ethers } from "ethers";
-import { getRandomConnectedWallet, getSigners } from "./SignerService";
+import {
+  getProvider,
+  getRandomConnectedWallet,
+  getSigners,
+} from "./SignerService";
 
 import axios from "axios";
 
@@ -55,15 +59,11 @@ async function sleep(ms: number) {
 }
 
 async function main() {
-  // await sleep(240000);
+  let provider = getProvider();
 
   let signers = getSigners(50);
-  // console.log("🚀 | main | signers", signers);
 
   let signerAddresses = signers.map((signer) => signer.address);
-  // console.log(signerAddresses);
-
-  // await sendMessage(MAIN, signers[0]);
 
   while (true) {
     if (!SKIP_PART_1) {
@@ -74,14 +74,6 @@ async function main() {
       let txs = await Promise.allSettled(requestFunds(signerAddresses));
 
       console.log("Requests Sent!");
-      // console.log(
-      //   "Fulfilled: ",
-      //   txs.map((tx) => tx.status).filter((x) => x == "fulfilled").length
-      // );
-      // console.log(
-      //   "Rejected: ",
-      //   txs.map((tx) => tx.status).filter((x) => x == "rejected").length
-      // );
 
       // Wait 4 minutes
       await sleep(240000);
@@ -101,15 +93,6 @@ async function main() {
         console.log("Chunks Remaining: ", chunksRemaining);
         let txs_2 = await Promise.allSettled(sendFunds(MAIN, signerChunk));
 
-        // console.log("Reqeusts Sent!");
-        // console.log(
-        //   "Fulfilled: ",
-        //   txs_2.map((tx) => tx.status).filter((x) => x == "fulfilled").length
-        // );
-        // console.log(
-        //   "Rejected: ",
-        //   txs_2.map((tx) => tx.status).filter((x) => x == "rejected").length
-        // );
         await sleep(3000);
         chunksRemaining--;
       }
@@ -117,7 +100,11 @@ async function main() {
       SKIP_PART_2 = false;
     }
 
-    console.log("Current Funds: ", await signers[0].getBalance(MAIN));
+    console.log(
+      "Current Funds: ",
+      ethers.utils.formatEther(await provider.getBalance(MAIN)),
+      "MATIC"
+    );
 
     // Loop;
   }
