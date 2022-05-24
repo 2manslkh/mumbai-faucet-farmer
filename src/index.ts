@@ -68,7 +68,7 @@ async function main() {
   // console.log("🚀 | main | signers", signers);
 
   let signerAddresses = signers.map((signer) => signer.address);
-  console.log(signerAddresses);
+  // console.log(signerAddresses);
 
   // await sendMessage(MAIN, signers[0]);
 
